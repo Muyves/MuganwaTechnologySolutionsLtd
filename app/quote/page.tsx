@@ -33,14 +33,24 @@ function QuoteContent() {
     projectDetails: '',
   });
 
-  const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
+  interface UploadedAttachment {
+    name: string;
+    url: string;
+    isImage: boolean;
+  }
+
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedAttachment[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [quoteSuccessId, setQuoteSuccessId] = useState<string | null>(null);
 
-  const handleSimulatedFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const names = Array.from(e.target.files).map((f) => f.name);
-      setUploadedFiles((prev) => [...prev, ...names]);
+      const filesArray = Array.from(e.target.files);
+      filesArray.forEach((file) => {
+        const isImg = file.type.startsWith('image/');
+        const url = URL.createObjectURL(file);
+        setUploadedFiles((prev) => [...prev, { name: file.name, url, isImage: isImg }]);
+      });
     }
   };
 
@@ -58,7 +68,7 @@ function QuoteContent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          sitePhotoNames: uploadedFiles,
+          sitePhotoNames: uploadedFiles.map((f) => f.name),
         }),
       });
       const data = await res.json();
@@ -279,32 +289,49 @@ function QuoteContent() {
                 type="file"
                 multiple
                 accept="image/*,.pdf"
-                onChange={handleSimulatedFileUpload}
+                onChange={handleFileUpload}
                 className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
               />
-              <Upload className="w-8 h-8 text-mts-teal-glow mx-auto mb-2" />
-              <p className="font-semibold text-white">Click or drag & drop property photos or PDF blueprints</p>
-              <p className="text-[11px] text-slate-400 mt-1">PNG, JPG, PDF up to 25MB each (e.g. gates, perimeters, server rooms)</p>
+              <Upload className="w-8 h-8 text-mts-teal mx-auto mb-2" />
+              <p className="font-semibold text-white">Click or drag & drop property photos or PDF blueprints from your device</p>
+              <p className="text-[11px] text-slate-400 mt-1">Camera photos, JPG, PNG, WEBP, PDF up to 25MB each (gates, perimeters, server rooms)</p>
             </div>
 
-            {/* Uploaded files list */}
+            {/* Uploaded files list with image previews */}
             {uploadedFiles.length > 0 && (
-              <div className="mt-3 space-y-1.5">
-                <span className="text-[11px] text-slate-400 font-semibold">Attached files ({uploadedFiles.length}):</span>
-                <div className="flex flex-wrap gap-2">
+              <div className="mt-4 space-y-2">
+                <span className="text-xs text-slate-300 font-semibold">Attached files ({uploadedFiles.length}):</span>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                   {uploadedFiles.map((file, i) => (
                     <div
                       key={i}
-                      className="bg-mts-surface border border-slate-700 px-2.5 py-1 rounded-lg flex items-center gap-2 text-white text-[11px]"
+                      className="bg-mts-surface border border-slate-700/80 rounded-xl p-2 relative group flex flex-col items-center overflow-hidden"
                     >
-                      <FileCheck className="w-3.5 h-3.5 text-emerald-400" />
-                      <span className="max-w-[150px] truncate">{file}</span>
+                      {file.isImage ? (
+                        <div className="relative w-full h-24 rounded-lg overflow-hidden bg-slate-950 mb-2">
+                          <img
+                            src={file.url}
+                            alt={file.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-full h-24 rounded-lg bg-slate-900 flex items-center justify-center text-slate-400 mb-2">
+                          <FileCheck className="w-8 h-8 text-emerald-400" />
+                        </div>
+                      )}
+
+                      <span className="text-[11px] text-slate-300 truncate w-full text-center px-1 font-mono">
+                        {file.name}
+                      </span>
+
                       <button
                         type="button"
                         onClick={() => removeFile(i)}
-                        className="text-slate-400 hover:text-red-400"
+                        className="absolute top-1 right-1 w-6 h-6 rounded-full bg-slate-900/90 hover:bg-red-600 text-slate-300 hover:text-white flex items-center justify-center transition shadow"
+                        title="Remove file"
                       >
-                        <X className="w-3 h-3" />
+                        <X className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   ))}

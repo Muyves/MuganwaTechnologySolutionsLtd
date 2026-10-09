@@ -25,6 +25,7 @@ import {
 import { initialProducts } from '@/data/products';
 import { initialOrders, initialBookings, initialQuotes, initialAuditLogs } from '@/data/sampleOrders';
 import { Product, Order, InstallationBooking, QuoteRequest, SecurityAuditLog } from '@/lib/types';
+import ImageUploader from '@/components/ImageUploader';
 
 export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'orders' | 'bookings' | 'quotes' | 'audit'>('overview');
@@ -889,15 +890,12 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-slate-300 font-semibold mb-1">Image URL</label>
-                <input
-                  type="url"
-                  value={productForm.image}
-                  onChange={(e) => setProductForm({ ...productForm, image: e.target.value })}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white"
-                />
-              </div>
+              <ImageUploader
+                value={productForm.image}
+                onChange={(newUrl) => setProductForm({ ...productForm, image: newUrl })}
+                label="Product / Hardware Photo"
+                helperText="Upload camera, NVR, server rack, or device photo from your phone or PC (JPEG, PNG, WEBP)"
+              />
 
               <div>
                 <label className="block text-slate-300 font-semibold mb-1">Short Description</label>
