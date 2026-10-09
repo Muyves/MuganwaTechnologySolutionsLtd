@@ -1,0 +1,195 @@
+// Prisma Schema for Muganwa Technology Solutions Ltd
+// Database: PostgreSQL / MySQL ready
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CUSTOMER
+  TECHNICIAN
+  STAFF
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  DISPATCHED
+  INSTALLED
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  MOMO
+  CARD
+  BANK_TRANSFER
+  COD
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  TECHNICIAN_DISPATCHED
+  COMPLETED
+  CANCELLED
+}
+
+enum QuoteStatus {
+  NEW
+  UNDER_REVIEW
+  QUOTE_SENT
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  passwordHash  String
+  fullName      String
+  phone         String?
+  role          Role           @default(CUSTOMER)
+  twoFactorAuth Boolean        @default(false)
+  twoFactorSecret String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  orders        Order[]
+  bookings      InstallationBooking[]
+  quotes        QuoteRequest[]
+  auditLogs     SecurityAuditLog[]
+}
+
+model Product {
+  id              String      @id @default(uuid())
+  name            String
+  slug            String      @unique
+  category        String
+  subCategory     String
+  brand           String
+  modelNumber     String      @unique
+  price           Decimal     @db.Decimal(10, 2)
+  compareAtPrice  Decimal?    @db.Decimal(10, 2)
+  inStock         Boolean     @default(true)
+  stockCount      Int         @default(0)
+  rating          Decimal     @default(5.0) @db.Decimal(2, 1)
+  reviewCount     Int         @default(0)
+  featured        Boolean     @default(false)
+  bestSeller      Boolean     @default(false)
+  resolution      String?
+  cameraType      String?
+  shortDescription String
+  description     String      @db.Text
+  features        String[]
+  specs           Json
+  images          String[]
+  datasheetUrl    String?
+  warrantyYears   Int         @default(2)
+  compatibleWith  String[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  orderItems      OrderItem[]
+}
+
+model Order {
+  id              String         @id // e.g. MTS-2026-8941
+  userId          String?
+  user            User?          @relation(fields: [userId], references: [id])
+  customerName    String
+  customerEmail   String
+  customerPhone   String
+  shippingAddress Json
+  subtotal        Decimal        @db.Decimal(10, 2)
+  installationFee Decimal        @default(0) @db.Decimal(10, 2)
+  tax             Decimal        @default(0) @db.Decimal(10, 2)
+  total           Decimal        @db.Decimal(10, 2)
+  paymentMethod   PaymentMethod  @default(MOMO)
+  paymentStatus   PaymentStatus  @default(PENDING)
+  orderStatus     OrderStatus    @default(PENDING)
+  notes           String?        @db.Text
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  items           OrderItem[]
+}
+
+model OrderItem {
+  id                  String   @id @default(uuid())
+  orderId             String
+  order               Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId           String
+  product             Product  @relation(fields: [productId], references: [id])
+  productName         String
+  price               Decimal  @db.Decimal(10, 2)
+  quantity            Int      @default(1)
+  includeInstallation Boolean  @default(false)
+  image               String
+}
+
+model InstallationBooking {
+  id                 String        @id // e.g. BKG-2026-104
+  userId             String?
+  user               User?         @relation(fields: [userId], references: [id])
+  customerName       String
+  email              String
+  phone              String
+  address            String
+  city               String
+  propertyType       String
+  requestedDate      DateTime
+  requestedTimeSlot  String
+  numberOfCameras    Int
+  hasExistingWiring  Boolean       @default(false)
+  notes              String?       @db.Text
+  status             BookingStatus @default(PENDING)
+  assignedTechnician String?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+}
+
+model QuoteRequest {
+  id                   String      @id // e.g. QUO-2026-301
+  userId               String?
+  user                 User?       @relation(fields: [userId], references: [id])
+  fullName             String
+  companyName          String?
+  email                String
+  phone                String
+  propertyType         String
+  cameraCount          Int
+  indoorOutdoorSplit   String
+  recordingDays        Int         @default(30)
+  requiresAccessControl Boolean    @default(false)
+  requiresAlarmIntercom Boolean    @default(false)
+  propertyAddress      String
+  estimatedBudget      String?
+  sitePhotoNames       String[]
+  projectDetails       String      @db.Text
+  status               QuoteStatus @default(NEW)
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+}
+
+model SecurityAuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  actor     String   // e.g., "MUKIZA Richard (Admin)"
+  action    String
+  details   String   @db.Text
+  ipAddress String
+  status    String   @default("SUCCESS")
+  createdAt DateTime @default(now())
+}
