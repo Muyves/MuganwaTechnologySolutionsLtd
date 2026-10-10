@@ -93,8 +93,8 @@ export const initialProducts: Product[] = [
       { label: "Power", value: "12V DC / PoE+ (802.3at)" }
     ],
     images: [
-      "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f8?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&w=800&q=80"
+      "https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80"
     ],
     datasheetUrl: "/datasheets/dahua-4mp-ptz.pdf",
     warrantyYears: 3,

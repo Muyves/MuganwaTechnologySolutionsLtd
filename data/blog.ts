@@ -152,7 +152,7 @@ Modern terminals utilize dual visible light and infrared cameras with active 3D 
     authorRole: "Managing Director & Senior Security Systems Engineer",
     publishedDate: "2026-05-04",
     readTime: "7 min read",
-    coverImage: "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f8?auto=format&fit=crop&w=1000&q=80",
+    coverImage: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1000&q=80",
     tags: ["Industrial", "Perimeter", "Warehouse", "ANPR", "Loss Prevention"],
     content: `
 Warehouses and manufacturing plants house millions of dollars in inventory, machinery, and raw commodities. Despite this, many industrial facilities suffer from critical security gaps.

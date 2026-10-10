@@ -62,7 +62,7 @@ export const solutionsData: SolutionPageData[] = [
     slug: "industrial-warehouse",
     title: "Industrial Plants, Logistics Hubs & Warehouses",
     subtitle: "Heavy-duty perimeter defense, long-range optical zoom, license plate recognition, and ruggedized environmental durability.",
-    heroImage: "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f8?auto=format&fit=crop&w=1200&q=80",
+    heroImage: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=80",
     challenge: "Industrial sites face extreme operational conditions: dust, moisture, lightning surges, massive perimeters spanning hundreds of meters, and frequent truck loading operations requiring forensic vehicle tracking.",
     solutionOverview: "Muganwa Technology Solutions Ltd engineers industrial-grade security backbones utilizing fiber-optic cabling, 25x/32x optical zoom PTZ tracking domes, ANPR cameras for automated vehicle weighbridge logging, and centralized guard room monitoring desks.",
     keyBenefits: [

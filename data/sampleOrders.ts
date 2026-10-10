@@ -106,7 +106,7 @@ export const initialOrders: Order[] = [
         price: 495.0,
         quantity: 2,
         includeInstallation: true,
-        image: "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f8?auto=format&fit=crop&w=400&q=80"
+        image: "https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&w=400&q=80"
       },
       {
         productId: "mts-work-001",
